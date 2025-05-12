@@ -1,149 +1,213 @@
 import { useState } from "react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import generatePdf from "../utils/generatePdf";
 
 const predefData = {
-    invoiceTitle: "INVOICE",
-    invoiceNumber: "INV-001",
-    dateIssued: "2025-05-10",
-    dueDate: "2025-05-17",
-    billedToName: "John Doe",
-    billedToAddress: "123 Elm Street\nCityville",
-    items: [
-        { description: "Website Design", quantity: 1, unitPrice: 500 },
-        { description: "Maintenance (3 months)", quantity: 3, unitPrice: 100 },
-    ],
-    notes: "Thank you for your business.",
+    invoiceTitle: "",
+    invoiceNumber: "",
+    dateIssued: "",
+    dueDate: "",
+    billedToName: "",
+    billedToAddress: "",
+    items: [{ description: "", quantity: 1, unitPrice: 0 }],
+    notes: "",
     issuedBy: {
-        name: "Ashardi Dev",
-        address: "Jl. Sukajadi 123\nBandung",
-        phone: "+62 812 3456 7890",
+        name: "",
+        address: "",
+        phone: "",
     },
     bank: {
-        accountName: "Ashardi Dev",
-        bankName: "Bank BCA",
-        accountNumber: "1234567890",
-        swiftCode: "CENAIDJA",
+        accountName: "",
+        bankName: "",
+        accountNumber: "",
+        swiftCode: "",
     },
     signature: {
-        name: "Anton Ashardi",
-        role: "Project Owner",
+        name: "",
+        role: "",
     },
 };
+
 
 const InvoiceForm = () => {
     const [formData, setFormData] = useState(predefData);
 
     const handleGenerate = () => {
+        const requiredFields = [
+            formData.invoiceTitle,
+            formData.invoiceNumber,
+            formData.dateIssued,
+            formData.dueDate,
+            formData.billedToName,
+            formData.billedToAddress,
+            formData.issuedBy.name,
+            formData.issuedBy.address,
+            formData.issuedBy.phone,
+            formData.bank.accountName,
+            formData.bank.bankName,
+            formData.bank.accountNumber,
+            formData.bank.swiftCode,
+            formData.signature.name,
+            formData.signature.role,
+        ];
+
+        const hasEmpty = requiredFields.some(val => !val || val.trim() === "");
+        const hasEmptyItem = formData.items.some(item =>
+            !item.description || item.quantity <= 0 || item.unitPrice <= 0
+        );
+
+        if (hasEmpty || hasEmptyItem) {
+            alert("Please fill in all required fields before generating the PDF.");
+            return;
+        }
+
         generatePdf(formData);
     };
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
+        <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
+            <h1 className="text-3xl font-bold">Invoice Generator</h1>
 
-            {/* Header */}
-            <h1 className="text-3xl font-bold text-center text-gray-800">Invoice Generator</h1>
-
-            {/* Invoice Info */}
-            <section className="grid md:grid-cols-2 gap-4">
-                <input type="text" placeholder="Invoice Title" className="border p-2 w-full"
-                       value={formData.invoiceTitle} onChange={(e) => setFormData({ ...formData, invoiceTitle: e.target.value })} />
-                <input type="text" placeholder="Invoice Number" className="border p-2 w-full"
-                       value={formData.invoiceNumber} onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })} />
-                <input type="date" className="border p-2 w-full"
-                       value={formData.dateIssued} onChange={(e) => setFormData({ ...formData, dateIssued: e.target.value })} />
-                <input type="date" className="border p-2 w-full"
-                       value={formData.dueDate} onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })} />
-            </section>
-
-            {/* Billed To */}
-            <section>
-                <h2 className="text-xl font-semibold mb-2">Billed To</h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Name" className="border p-2 w-full"
-                           value={formData.billedToName} onChange={(e) => setFormData({ ...formData, billedToName: e.target.value })} />
-                    <textarea placeholder="Address" className="border p-2 w-full" rows={2}
-                              value={formData.billedToAddress} onChange={(e) => setFormData({ ...formData, billedToAddress: e.target.value })} />
+            <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Invoice Info</h2>
+                <div className="grid grid-cols-$1 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Invoice Title</label>
+                        <input type="text" className="border p-3 w-full rounded" value={formData.invoiceTitle} onChange={(e) => setFormData({ ...formData, invoiceTitle: e.target.value })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Invoice Number</label>
+                        <input type="text" className="border p-4 w-full" value={formData.invoiceNumber} onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Date Issued</label>
+                        <input type="date" className="border p-4 w-full" value={formData.dateIssued} onChange={(e) => setFormData({ ...formData, dateIssued: e.target.value })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Due Date</label>
+                        <input type="date" className="border p-4 w-full" value={formData.dueDate} onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })} />
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            {/* Items */}
-            <section>
-                <h2 className="text-xl font-semibold mb-2">Items</h2>
-                <div className="space-y-3">
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Billed To</h2>
+                <div className="grid grid-cols-1 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Name</label>
+                        <input type="text" className="border p-4 w-full" value={formData.billedToName} onChange={(e) => setFormData({ ...formData, billedToName: e.target.value })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Address</label>
+                        <textarea className="border p-4 w-full" rows={2} value={formData.billedToAddress} onChange={(e) => setFormData({ ...formData, billedToAddress: e.target.value })} />
+                    </div>
+                </div>
+            </div>
+
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Items</h2>
+                <div className="space-y-2">
                     {formData.items.map((item, index) => (
-                        <div key={index} className="flex flex-wrap gap-2">
-                            <input type="text" placeholder="Description" className="border p-2 flex-1 min-w-[150px]"
-                                   value={item.description} onChange={(e) => {
-                                const newItems = [...formData.items];
-                                newItems[index].description = e.target.value;
-                                setFormData({ ...formData, items: newItems });
-                            }} />
-                            <input type="number" placeholder="Qty" className="border p-2 w-20"
-                                   value={item.quantity} onChange={(e) => {
-                                const newItems = [...formData.items];
-                                newItems[index].quantity = parseInt(e.target.value);
-                                setFormData({ ...formData, items: newItems });
-                            }} />
-                            <input type="number" placeholder="Unit Price" className="border p-2 w-32"
-                                   value={item.unitPrice} onChange={(e) => {
-                                const newItems = [...formData.items];
-                                newItems[index].unitPrice = parseFloat(e.target.value);
-                                setFormData({ ...formData, items: newItems });
-                            }} />
+                        <div key={index} className="flex gap-4 mb-2 items-end">
+                            <div className="w-1/2">
+                                <label className="block text-sm font-medium mb-1">Description</label>
+                                <input type="text" className="border p-2 w-full" value={item.description} onChange={(e) => {
+                                    const newItems = [...formData.items];
+                                    newItems[index].description = e.target.value;
+                                    setFormData({ ...formData, items: newItems });
+                                }} />
+                            </div>
+                            <div className="w-1/6">
+                                <label className="block text-sm font-medium mb-1">Qty</label>
+                                <input type="number" className="border p-2 w-full" value={item.quantity} onChange={(e) => {
+                                    const newItems = [...formData.items];
+                                    newItems[index].quantity = parseInt(e.target.value);
+                                    setFormData({ ...formData, items: newItems });
+                                }} />
+                            </div>
+                            <div className="w-1/3">
+                                <label className="block text-sm font-medium mb-1">Unit Price</label>
+                                <input type="number" className="border p-2 w-full" value={item.unitPrice} onChange={(e) => {
+                                    const newItems = [...formData.items];
+                                    newItems[index].unitPrice = parseFloat(e.target.value);
+                                    setFormData({ ...formData, items: newItems });
+                                }} />
+                            </div>
+                            {formData.items.length > 1 && (
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newItems = [...formData.items];
+                                            if (newItems.length > 1) {
+                                                newItems.splice(index, 1);
+                                                setFormData({ ...formData, items: newItems });
+                                            }
+                                        }}
+                                        className="text-red-600 text-sm ml-2"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
-                <button onClick={() => setFormData({ ...formData, items: [...formData.items, { description: "", quantity: 1, unitPrice: 0 }] })}
-                        className="mt-3 bg-green-500 text-white px-4 py-1 rounded text-sm">
+                <button onClick={() => setFormData({ ...formData, items: [...formData.items, { description: "", quantity: 1, unitPrice: 0 }] })} className="bg-green-500 text-white px-3 py-1 text-sm mt-2">
                     + Add Item
                 </button>
-                <textarea placeholder="Additional Notes" className="border p-2 mt-4 w-full"
-                          value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
-            </section>
-
-            {/* Issued By */}
-            <section>
-                <h2 className="text-xl font-semibold mb-2">Issued By</h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                    <input type="text" placeholder="Your Name" className="border p-2 w-full"
-                           value={formData.issuedBy.name} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, name: e.target.value } })} />
-                    <textarea placeholder="Your Address" className="border p-2 w-full" rows={2}
-                              value={formData.issuedBy.address} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, address: e.target.value } })} />
-                    <input type="text" placeholder="Phone Number" className="border p-2 w-full"
-                           value={formData.issuedBy.phone} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, phone: e.target.value } })} />
+                <div className="mt-4">
+                    <label className="block text-sm font-medium mb-1">Additional Notes</label>
+                    <textarea className="border p-2 w-full" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })} />
                 </div>
-            </section>
+            </div>
 
-            {/* Bank Info */}
-            <section>
-                <h2 className="text-xl font-semibold mb-2">Bank Information</h2>
-                <div className="grid md:grid-cols-4 gap-4">
-                    <input type="text" placeholder="Account Name" className="border p-2 w-full"
-                           value={formData.bank.accountName} onChange={(e) => setFormData({ ...formData, bank: { ...formData.bank, accountName: e.target.value } })} />
-                    <input type="text" placeholder="Bank Name" className="border p-2 w-full"
-                           value={formData.bank.bankName} onChange={(e) => setFormData({ ...formData, bank: { ...formData.bank, bankName: e.target.value } })} />
-                    <input type="text" placeholder="Account Number" className="border p-2 w-full"
-                           value={formData.bank.accountNumber} onChange={(e) => setFormData({ ...formData, bank: { ...formData.bank, accountNumber: e.target.value } })} />
-                    <input type="text" placeholder="SWIFT Code" className="border p-2 w-full"
-                           value={formData.bank.swiftCode} onChange={(e) => setFormData({ ...formData, bank: { ...formData.bank, swiftCode: e.target.value } })} />
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Issued By</h2>
+                <div className="grid grid-cols-1 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Name</label>
+                        <input type="text" className="border p-2 w-full" value={formData.issuedBy.name} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, name: e.target.value } })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Address</label>
+                        <textarea className="border p-2 w-full" rows={2} value={formData.issuedBy.address} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, address: e.target.value } })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Phone</label>
+                        <input type="text" className="border p-2 w-full" value={formData.issuedBy.phone} onChange={(e) => setFormData({ ...formData, issuedBy: { ...formData.issuedBy, phone: e.target.value } })} />
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            {/* Signature */}
-            <section>
-                <h2 className="text-xl font-semibold mb-2">Signature</h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Signer Name" className="border p-2 w-full"
-                           value={formData.signature.name} onChange={(e) => setFormData({ ...formData, signature: { ...formData.signature, name: e.target.value } })} />
-                    <input type="text" placeholder="Signer Role" className="border p-2 w-full"
-                           value={formData.signature.role} onChange={(e) => setFormData({ ...formData, signature: { ...formData.signature, role: e.target.value } })} />
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Bank Information</h2>
+                <div className="grid grid-cols-1 gap-4">
+                    {['accountName', 'bankName', 'accountNumber', 'swiftCode'].map((field, i) => (
+                        <div key={i}>
+                            <label className="block text-sm font-medium mb-1">{field.replace(/([A-Z])/g, ' $1').replace(/^\w/, c => c.toUpperCase())}</label>
+                            <input type="text" className="border p-2 w-full" value={formData.bank[field]} onChange={(e) => setFormData({ ...formData, bank: { ...formData.bank, [field]: e.target.value } })} />
+                        </div>
+                    ))}
                 </div>
-            </section>
+            </div>
 
-            {/* Action Button */}
+            <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Signature</h2>
+                <div className="grid grid-cols-1 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Name</label>
+                        <input type="text" className="border p-2 w-full" value={formData.signature.name} onChange={(e) => setFormData({ ...formData, signature: { ...formData.signature, name: e.target.value } })} />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Role</label>
+                        <input type="text" className="border p-2 w-full" value={formData.signature.role} onChange={(e) => setFormData({ ...formData, signature: { ...formData.signature, role: e.target.value } })} />
+                    </div>
+                </div>
+            </div>
+
             <div className="text-right">
-                <button onClick={handleGenerate} className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
+                <button onClick={handleGenerate} className="bg-blue-600 text-white px-6 py-2 rounded">
                     Download PDF
                 </button>
             </div>
