@@ -66,7 +66,8 @@ const InvoiceForm = () => {
 
     return (
         <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
-            <h1 className="text-3xl font-bold">Invoice Generator</h1>
+            <h1 className="text-3xl font-bold text-red-500">Invoice Generator</h1>
+
 
             <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Invoice Info</h2>
