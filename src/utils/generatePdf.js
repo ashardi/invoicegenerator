@@ -85,10 +85,30 @@ const generatePdf = (data) => {
             { text: issuedBy.phone },
 
             { text: "\nBank Information:", style: "subheader" },
-            { text: `Account Name: ${bank.accountName}` },
-            { text: `Bank Name: ${bank.bankName}` },
-            { text: `Account Number: ${bank.accountNumber}` },
-            { text: `SWIFT Code: ${bank.swiftCode}` },
+            {
+                columns: [
+                    { text: "Account Name:", bold: true, width: 120 },
+                    { text: bank.accountName }
+                ]
+            },
+            {
+                columns: [
+                    { text: "Bank Name:", bold: true, width: 120 },
+                    { text: bank.bankName }
+                ]
+            },
+            {
+                columns: [
+                    { text: "Account Number:", bold: true, width: 120 },
+                    { text: bank.accountNumber }
+                ]
+            },
+            {
+                columns: [
+                    { text: "SWIFT Code:", bold: true, width: 120 },
+                    { text: bank.swiftCode }
+                ]
+            },
 
             { text: "\nSignature:", style: "subheader" },
             { text: signature.name },
